@@ -1,0 +1,11 @@
+#open:disabled {
+    text-decoration: line-through;
+}
+
+div.output {
+  font-family: monospace;
+  background-color: black;
+  color: orange;
+  margin: 2em;
+  padding: 1em;
+}

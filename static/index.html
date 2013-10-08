@@ -1,23 +1,22 @@
 <!doctype html>
-<title>tty.js</title>
+<html>
+<head>
+<title>Recomputation test</title>
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="user.css">
+</head>
 
-<h1>tty.js</h1>
+<body>
+<h1>Recomputation test</h1>
 
-<div id="help">
-  <p>Click the titlebar to drag.</p>
-  <p>Double-click titlebar to maximize.</p>
-  <p>Click the lower-right corner to resize.</p>
-  <p>Click the tilde to open a new tab.</p>
-  <p>Click the tilde with a modifier to close the window.</p>
-</div>
+<button id="open" disabled="disabled">Open Terminal</button>
 
-<button id="open">Open Terminal</button>
-<button id="lights">Light Switch</button>
+<button id="control" onclick="controlVM()">Start VM</button>
 
 <script src="socket.io/socket.io.js"></script>
 <script src="term.js"></script>
 <script src="options.js"></script>
 <script src="tty.js"></script>
 <script src="user.js"></script>
+</body>
+</html>
