@@ -9,7 +9,7 @@ var conf = tty.config.readConfig()
     shell: 'vagrant',
     shellArgs: [ "ssh" ],
     static: ".",
-    cwd: ".",
+    cwd: "vms",
     users: {
       re: 'comp'
     },
