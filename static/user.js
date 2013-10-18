@@ -42,7 +42,7 @@ function controlVM() {
     });
 }
 
-function statusVM() {
+function getVMStatus(vm, f) {
     var parts = document.location.pathname.split('/')
       , base = parts.slice(0, parts.length - 1).join('/') + '/'
       , resource = base.substring(1) + 'socket.io';
@@ -50,19 +50,27 @@ function statusVM() {
 
     control.disabled = true;
 
-    socket.emit("status", function(error) {
+    var out = [];
+    socket.emit("status", { name: vm }, function(error) {
       if(error) console.log(error);
       socket.removeAllListeners("output");
-      control.disabled = false;
+      f(out.join(" "));
     })
 
     socket.on("output", function(data) {
-      if(data.match("running")) {
-          control.innerHTML = "Stop VM";
-          button.disabled = false;
-      } else if(data.match("poweroff")) {
-          control.innerHTML = "Start VM";
-          button.disabled = true;
-      }
+      out.push(data);
     });
+}
+
+function listVMs(f) {
+    var parts = document.location.pathname.split('/')
+      , base = parts.slice(0, parts.length - 1).join('/') + '/'
+      , resource = base.substring(1) + 'socket.io';
+    socket = io.connect(null, { resource: resource });
+
+    socket.emit("list", function(error, data) {
+      if(error) console.log(error);
+      socket.removeAllListeners("output");
+      f(data);
+    })
 }
