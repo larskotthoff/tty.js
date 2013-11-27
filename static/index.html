@@ -9,13 +9,8 @@
 <body>
 <h1>Recomputation test</h1>
 
-<button id="open" disabled="disabled">Open Terminal</button>
-
-<button id="control" onclick="controlVM()">Start VM</button>
-
-<table id="vms">
-<tr><th>VM</th><th>Status</th></tr>
-</table>
+<div id="vms">
+</div>
 
 <script src="socket.io/socket.io.js"></script>
 <script src="term.js"></script>
@@ -26,20 +21,55 @@
 
 listVMs(function(vms) {
   vms.forEach(function(vm) {
-      var tr = document.createElement("tr"),
-          tdn = document.createElement("td"),
-          tds = document.createElement("td");
+      var div = document.createElement("div"),
+          namediv = document.createElement("div"),
+          statusdiv = document.createElement("div"),
+          controldiv = document.createElement("div"),
+          sbutton = document.createElement("button"),
+          tbutton = document.createElement("button");
 
-      document.getElementById("vms").appendChild(tr);
-      tr.appendChild(tdn);
-      tr.appendChild(tds);
+      div.className = "container";
+      div.id = "container-" + vm;
+      document.getElementById("vms").appendChild(div);
+      namediv.className = "name";
+      statusdiv.className = "status";
+      statusdiv.id = "status-" + vm;
+      controldiv.className = "control";
+      div.appendChild(namediv);
+      div.appendChild(statusdiv);
+      sbutton.onclick = function() {
+        controlVM(vm);
+      }
+      sbutton.disabled = true;
+      sbutton.innerHTML = "Checking status...";
+      sbutton.id = "control-" + vm;
 
-      tdn.innerHTML = vm;
+      tbutton.disabled = true;
+      tbutton.innerHTML = "Open Terminal";
+      tbutton.id = "terminal-" + vm;
+      statusdiv.innerHTML = "Checking status...";
+      controldiv.appendChild(sbutton);
+      controldiv.appendChild(tbutton);
+      div.appendChild(controldiv);
+
+      makeTTY(vm);
+
+      namediv.innerHTML = vm;
       getVMStatus(vm, function(data) {
+          sbutton.disabled = false;
           if(data.match("running")) {
-              tds.innerHTML = "running";
+              statusdiv.innerHTML = "running";
+              sbutton.innerHTML = "Stop VM";
+              tbutton.disabled = false;
           } else if(data.match("poweroff")) {
-              tds.innerHTML = "stopped";
+              statusdiv.innerHTML = "stopped";
+              sbutton.innerHTML = "Start VM";
+              tbutton.disabled = true;
+          } else {
+              statusdiv.innerHTML = "failed to determine &semph; " + data;
+              sbutton.innerHTML = "Start VM";
+              sbutton.disabled = true;
+              tbutton.disabled = true;
           }
       })
   });

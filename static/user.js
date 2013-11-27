@@ -1,36 +1,44 @@
-var control = document.getElementById('control'),
-    button = document.getElementById('open');
+function controlVM(vm) {
+    var div = document.getElementById("container-" + vm),
+        statusdiv = document.getElementById("status-" + vm),
+        control = document.getElementById("control-" + vm),
+        button = document.getElementById("terminal-" + vm);
 
-function controlVM() {
     var parts = document.location.pathname.split('/')
       , base = parts.slice(0, parts.length - 1).join('/') + '/'
-      , resource = base.substring(1) + 'socket.io';
-    socket = io.connect(null, { resource: resource });
+      , resource = base.substring(1) + 'socket.io'
+      , socket = io.connect(null, { resource: resource, 'force new connection': true });
 
     control.disabled = true;
 
     var el = document.createElement("div");
     el.className = "output";
-    document.body.appendChild(el);
+    div.appendChild(el);
 
     if(button.disabled) {
-      socket.emit("start", function(error) {
+      statusdiv.innerHTML = "starting...";
+      socket.emit("start", { name: vm }, function(error) {
         if(error) {
           el.innerHTML = el.innerHTML + error.replace(/\n/g, "<br/>");
+          statusdiv.innerHTML = "faulted";
         } else {
           control.innerHTML = "Stop VM";
+          statusdiv.innerHTML = "running";
           button.disabled = false;
         }
         control.disabled = false;
         socket.removeAllListeners("output");
       });
     } else {
-      socket.emit("stop", function(error) {
+      statusdiv.innerHTML = "stopping...";
+      button.disabled = true;
+      socket.emit("stop", { name: vm }, function(error) {
         if(error) {
           el.innerHTML = el.innerHTML + error.replace(/\n/g, "<br/>");
+          statusdiv.innerHTML = "faulted";
         } else {
           control.innerHTML = "Start VM";
-          button.disabled = true;
+          statusdiv.innerHTML = "stopped";
         }
         control.disabled = false;
         socket.removeAllListeners("output");
@@ -45,10 +53,8 @@ function controlVM() {
 function getVMStatus(vm, f) {
     var parts = document.location.pathname.split('/')
       , base = parts.slice(0, parts.length - 1).join('/') + '/'
-      , resource = base.substring(1) + 'socket.io';
-    socket = io.connect(null, { resource: resource });
-
-    control.disabled = true;
+      , resource = base.substring(1) + 'socket.io'
+      , socket = io.connect(null, { resource: resource, 'force new connection': true });
 
     var out = [];
     socket.emit("status", { name: vm }, function(error) {
@@ -65,8 +71,8 @@ function getVMStatus(vm, f) {
 function listVMs(f) {
     var parts = document.location.pathname.split('/')
       , base = parts.slice(0, parts.length - 1).join('/') + '/'
-      , resource = base.substring(1) + 'socket.io';
-    socket = io.connect(null, { resource: resource });
+      , resource = base.substring(1) + 'socket.io'
+      , socket = io.connect(null, { resource: resource });
 
     socket.emit("list", function(error, data) {
       if(error) console.log(error);

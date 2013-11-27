@@ -3,7 +3,7 @@
  * Copyright (c) 2012-2013, Christopher Jeffrey (MIT License)
  */
 
-;(function() {
+function makeTTY(vm) {
 
 /**
  * Elements
@@ -12,10 +12,7 @@
 var document = this.document
   , window = this
   , root
-  , body
-  , h1
-  , open
-  , lights;
+  , body;
 
 /**
  * Initial Document Title
@@ -47,12 +44,13 @@ tty.socket;
 tty.windows;
 tty.terms;
 tty.elements;
+tty.vm;
 
 /**
  * Open
  */
 
-tty.open = function() {
+tty.open = function(vm) {
   if (document.location.pathname) {
     var parts = document.location.pathname.split('/')
       , base = parts.slice(0, parts.length - 1).join('/') + '/'
@@ -69,28 +67,16 @@ tty.open = function() {
   tty.elements = {
     root: document.documentElement,
     body: document.body,
-    h1: document.getElementsByTagName('h1')[0],
-    open: document.getElementById('open'),
-    lights: document.getElementById('lights')
   };
 
   root = tty.elements.root;
   body = tty.elements.body;
-  h1 = tty.elements.h1;
-  open = tty.elements.open;
-  lights = tty.elements.lights;
 
-  if (open) {
-    on(open, 'click', function() {
-      new Window;
-    });
-  }
+  tty.vm = vm;
 
-  if (lights) {
-    on(lights, 'click', function() {
-      tty.toggleLights();
-    });
-  }
+  on(document.getElementById("terminal-" + vm), 'click', function() {
+    new Window;
+  });
 
   tty.socket.on('connect', function() {
     tty.reset();
@@ -183,16 +169,6 @@ tty.reset = function() {
 };
 
 /**
- * Lights
- */
-
-tty.toggleLights = function() {
-  root.className = !root.className
-    ? 'dark'
-    : '';
-};
-
-/**
  * Window
  */
 
@@ -223,7 +199,7 @@ function Window(socket) {
 
   title = document.createElement('div');
   title.className = 'title';
-  title.innerHTML = '';
+  title.innerHTML = tty.vm;
 
   this.socket = socket || tty.socket;
   this.element = el;
@@ -589,7 +565,7 @@ function Tab(win, socket) {
 
   win.tabs.push(this);
 
-  this.socket.emit('create', cols, rows, function(err, data) {
+  this.socket.emit('create', { name: tty.vm }, cols, rows, function(err, data) {
     if (err) return self._destroy();
     self.pty = data.pty;
     self.id = data.id;
@@ -618,7 +594,6 @@ Tab.prototype.handleTitle = function(title) {
 
   if (Terminal.focus === this) {
     document.title = title;
-    // if (h1) h1.innerHTML = title;
   }
 
   if (this.window.focused === this) {
@@ -653,7 +628,7 @@ Tab.prototype.focus = function() {
     win.element.appendChild(this.element);
     win.focused = this;
 
-    win.title.innerHTML = this.process;
+    win.title.innerHTML = tty.vm + " &mdash; " + this.process;
     document.title = this.title || initialTitle;
     this.button.style.fontWeight = 'bold';
     this.button.style.color = '';
@@ -704,7 +679,6 @@ Tab.prototype._destroy = function() {
 
   // if (!tty.windows.length) {
   //   document.title = initialTitle;
-  //   if (h1) h1.innerHTML = initialTitle;
   // }
 
   this.__destroy();
@@ -860,7 +834,7 @@ Tab.prototype.setProcessName = function(name) {
     // if (this.title) {
     //   name += ' (' + this.title + ')';
     // }
-    this.window.title.innerHTML = name;
+    this.window.title.innerHTML = tty.vm + " &mdash; " + name;
   }
 };
 
@@ -886,33 +860,9 @@ function sanitize(text) {
   return (text + '').replace(/[&<>]/g, '')
 }
 
-/**
- * Load
- */
-
-function load() {
-  if (load.done) return;
-  load.done = true;
-
-  off(document, 'load', load);
-  off(document, 'DOMContentLoaded', load);
-  tty.open();
-}
-
-on(document, 'load', load);
-on(document, 'DOMContentLoaded', load);
-setTimeout(load, 200);
-
-/**
- * Expose
- */
+tty.open(vm);
 
 tty.Window = Window;
 tty.Tab = Tab;
 tty.Terminal = Terminal;
-
-this.tty = tty;
-
-}).call(function() {
-  return this || (typeof window !== 'undefined' ? window : global);
-}());
+}

@@ -1,11 +1,30 @@
-#open:disabled {
-    text-decoration: line-through;
-}
-
 div.output {
   font-family: monospace;
   background-color: black;
   color: orange;
   margin: 2em;
   padding: 1em;
+  clear: both;
+  padding: 20px;
+}
+
+div.container {
+  width: 99%;
+  padding: 20px;
+}
+
+div.name {
+  float: left;
+  width: 31%;
+  font-weight: bold;
+}
+
+div.status {
+  float: left;
+  width: 31%;
+}
+
+div.control {
+  float: left;
+  width: 31%;
 }
