@@ -16,6 +16,7 @@ function controlVM(vm) {
 
     if(vm.running) {
       statusdiv.text("stopping...");
+      statusdiv.append("img").attr("src", "static/load.gif");
       button.attr("disabled", true);
       socket.emit("stop", { name: vm.name }, function(error) {
         if(error) {
@@ -28,10 +29,12 @@ function controlVM(vm) {
         vm.running = false;
         control.attr("disabled", null);
         boxbutton.attr("disabled", null);
+        el.html(el.html() + "[done]");
         socket.removeAllListeners("output");
       });
     } else {
       statusdiv.text("starting...");
+      statusdiv.append("img").attr("src", "static/load.gif");
       socket.emit("start", { name: vm.name }, function(error) {
         if(error) {
           el.html(el.html() + error.replace(/\n|\r/g, "<br/>"));
@@ -44,6 +47,7 @@ function controlVM(vm) {
         }
         control.attr("disabled", null);
         boxbutton.attr("disabled", null);
+        el.html(el.html() + "[done]");
         socket.removeAllListeners("output");
       });
     }
@@ -68,11 +72,11 @@ function box(vm) {
 
     var el = setupOp(vm);
 
-    statusdiv.text("boxing...");
+    statusdiv.text("boxing up...");
+    statusdiv.append("img").attr("src", "static/load.gif");
     button.attr("disabled", true);
     boxbutton.attr("disabled", true);
 
-    statusdiv.text("boxing up...");
     control.text("Start VM");
     vm.running = false;
     socket.emit("package", { name: vm.name }, function(error) {
@@ -91,6 +95,7 @@ function box(vm) {
       }
       control.attr("disabled", null);
       boxbutton.attr("disabled", null);
+      el.html(el.html() + "[done]");
       socket.removeAllListeners("output");
     });
 
@@ -200,6 +205,7 @@ listVMs(function(_vms) {
         , statusdiv = d3.select("#status-" + vm.name)
         , control = d3.select("#control-" + vm.name)
         , button = d3.select("#terminal-" + vm.name);
+      statusdiv.append("img").attr("src", "static/load.gif");
 
       getVMStatus(vm, function(data) {
           control.attr("disabled", null);
@@ -255,6 +261,7 @@ function create() {
       , statusdiv = d3.select("#status-" + vm.name)
       , control = d3.select("#control-" + vm.name);
 
+    statusdiv.append("img").attr("src", "static/load.gif");
     var el = setupOp(vm);
 
     socket.emit("createVM", { 'name': name, 'base': base }, function(error) {
@@ -266,6 +273,7 @@ function create() {
         control.attr("disabled", null);
         statusdiv.text("Stopped");
       }
+      el.html(el.html() + "[done]");
       socket.removeAllListeners("output");
     });
 
