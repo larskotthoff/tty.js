@@ -142,8 +142,8 @@ function create() {
       , base = d3.select("#new-base").selectAll("option:checked").text();
 
     ct.selectAll(".error").remove();
-    if(name.length == 0) {
-        ct.append("div").attr("class", "error").text("Please enter a name!");
+    if(name.match(/^[a-zA-Z0-9-_ ]+$/) === null) {
+        ct.append("div").attr("class", "error").text("Invalid name!");
         return;
     }
     if(vms.indexOf(name) != -1 || name == "precise64") {
