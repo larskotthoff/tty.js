@@ -1,30 +1,53 @@
+body {
+    font-family: "OpenSans", sans-serif;
+}
+
 div.output {
   font-family: monospace;
-  background-color: black;
+  background-color: #444;
   color: orange;
-  margin: 2em;
+  margin-top: 4em;
   padding: 1em;
   clear: both;
-  padding: 20px;
+  border: 1px solid black;
 }
 
-div.container {
-  width: 99%;
-  padding: 20px;
+.container {
+  width: 95%;
+  padding: 2em;
+  border: 1px solid black;
+  margin-top: 2em;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-div.name {
-  float: left;
-  width: 31%;
+#new {
+  width: 95%;
+  padding: 1em;
+  margin-top: 1em;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.name {
+  font-size: larger;
   font-weight: bold;
 }
 
 div.status {
   float: left;
-  width: 31%;
+  width: 50%;
+  font-weight: bold;
+  font-size: large;
 }
 
 div.control {
   float: left;
-  width: 31%;
+  width: 50%;
+  text-align: right;
+}
+
+.error {
+    color: red;
 }
