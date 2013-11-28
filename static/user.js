@@ -234,7 +234,7 @@ function create() {
         ct.append("div").attr("class", "error").text("Invalid name!");
         return;
     }
-    if(vms.indexOf(name) != -1 || name == "precise64") {
+    if(vms.map(function(d) { return d.name; }).indexOf(name) != -1 || name == "precise64") {
         ct.append("div").attr("class", "error").text("VM already exists!");
         return;
     }
