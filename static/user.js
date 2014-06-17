@@ -87,7 +87,7 @@ function box(vm) {
         if(!vm.boxed) {
             d3.select("#new-base").append("option").text(vm.name);
             controldiv.insert("a", "*")
-                      .attr("href", "vms/" + vm.name + "/" + vm.name + ".box")
+                      .attr("href", "vms/" + user.id + "/" + vm.name + "/" + vm.name + ".box")
                       .text("Download package");
         }
         vm.boxed = true;
@@ -169,7 +169,7 @@ function mkVMDiv(vm, placeholder) {
                               });
     if(vm.boxed) {
       controldiv.insert("a", "*")
-                .attr("href", "vms/" + vm.name + "/" + vm.name + ".box")
+                .attr("href", "vms/" + user.id + "/" + vm.name + "/" + vm.name + ".box")
                 .text("Download package");
     }
   }
@@ -192,43 +192,59 @@ function setupOp(vm) {
 }
 
 var vms;
+var user;
 
-listVMs(function(_vms) {
-  vms = _vms;
-  vms.forEach(function(vm) {
-      if(vm.boxed) d3.select("#new-base").append("option").text(vm.name);
+function init() {
+    var parts = document.location.pathname.split('/')
+      , base = parts.slice(0, parts.length - 1).join('/') + '/'
+      , resource = base.substring(1) + 'socket.io'
+      , socket = io.connect(null, { resource: resource });
 
-      mkVMDiv(vm, "Checking status...");
-      makeTTY(vm.name);
+    socket.emit("getUser", function(error, data) {
+      if(error) console.log(error);
+      user = data;
+      d3.select("#welcome").html("Experiments for " + user.name);
 
-      var div = d3.select("#container-" + vm.name)
-        , statusdiv = d3.select("#status-" + vm.name)
-        , control = d3.select("#control-" + vm.name)
-        , button = d3.select("#terminal-" + vm.name);
-      statusdiv.append("img").attr("src", "static/load.gif");
+      listVMs(function(_vms) {
+        vms = _vms;
+        vms.forEach(function(vm) {
+            if(vm.boxed) d3.select("#new-base").append("option").text(vm.name);
 
-      getVMStatus(vm, function(data) {
-          control.attr("disabled", null);
-          if(data.match("running")) {
-              statusdiv.text("running");
-              control.text("Stop VM");
-              button.attr("disabled", null);
-              vm.running = true;
-          } else if(data.match("poweroff")) {
-              statusdiv.text("stopped");
-              control.text("Start VM");
-              button.attr("disabled", true);
-              vm.running = false;
-          } else {
-              statusdiv.text("Failed to determine!");
-              console.log(data);
-              control.text("Start VM");
-              control.attr("disabled", true);
-              button.attr("disabled", true);
-          }
-      })
-  });
-});
+            mkVMDiv(vm, "Checking status...");
+            makeTTY(vm.name);
+
+            var div = d3.select("#container-" + vm.name)
+              , statusdiv = d3.select("#status-" + vm.name)
+              , control = d3.select("#control-" + vm.name)
+              , button = d3.select("#terminal-" + vm.name);
+            statusdiv.append("img").attr("src", "static/load.gif");
+
+            getVMStatus(vm, function(data) {
+                control.attr("disabled", null);
+                if(data.match("running")) {
+                    statusdiv.text("running");
+                    control.text("Stop VM");
+                    button.attr("disabled", null);
+                    vm.running = true;
+                } else if(data.match("poweroff")) {
+                    statusdiv.text("stopped");
+                    control.text("Start VM");
+                    button.attr("disabled", true);
+                    vm.running = false;
+                } else {
+                    statusdiv.text("Failed to determine!");
+                    console.log(data);
+                    control.text("Start VM");
+                    control.attr("disabled", true);
+                    button.attr("disabled", true);
+                }
+            })
+        });
+      });
+    });
+};
+
+init();
 
 function create() {
     var ct = d3.select("#new")
