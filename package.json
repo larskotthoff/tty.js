@@ -1,22 +1,24 @@
 {
-  "name": "tty.js",
-  "description": "A terminal for your browser",
-  "author": "Christopher Jeffrey",
-  "version": "0.2.13",
+  "name": "tty.js-recomputation",
+  "description": "A user interface for creating virtual machines for recomputation.org",
+  "author": "Lars Kotthoff",
+  "version": "0.0.1",
   "main": "./index.js",
   "bin": "./bin/tty.js",
   "man": "./man/tty.js.1",
   "preferGlobal": false,
-  "repository": "git://github.com/chjj/tty.js.git",
-  "homepage": "https://github.com/chjj/tty.js",
-  "bugs": { "url": "https://github.com/chjj/tty.js/issues" },
+  "repository": "git://github.com/larskotthoff/tty.js.git",
+  "homepage": "https://github.com/larskotthoff/tty.js",
+  "bugs": { "url": "https://github.com/larskotthoff/tty.js/issues" },
   "keywords": ["tty", "terminal", "term", "xterm"],
   "tags": ["tty", "terminal", "term", "xterm"],
   "dependencies": {
     "express": "3.1.0",
     "socket.io": "0.9.13",
     "pty.js": "0.2.3",
-    "term.js": "0.0.3"
+    "term.js": "0.0.3",
+    "passport-github": "*",
+    "cookie-parser": "*"
   },
   "engines": { "node": ">= 0.8.0" }
 }

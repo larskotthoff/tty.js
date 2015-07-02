@@ -256,7 +256,10 @@ function create() {
         ct.append("div").attr("class", "error").text("Invalid name!");
         return;
     }
-    if(vms.map(function(d) { return d.name; }).indexOf(name) != -1 || name == "precise64") {
+    if(vms.map(function(d) { return d.name; }).indexOf(name) != -1 ||
+        name == "Ubuntu Server 14.04" ||
+        name == "Ubuntu Server 14.10" ||
+        name == "Ubuntu Server 15.04") {
         ct.append("div").attr("class", "error").text("VM already exists!");
         return;
     }
